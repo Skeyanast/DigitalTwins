@@ -1,1 +1,1 @@
-# Practice 2. Creating a 3D scene
+# Practice 2. Programmatic modification of objects
