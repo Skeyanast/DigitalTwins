@@ -1,1 +1,1 @@
-# Практическое задание 2
+# Practice 2. Creating a 3D scene
