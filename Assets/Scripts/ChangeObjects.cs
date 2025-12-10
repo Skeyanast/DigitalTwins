@@ -1,24 +1,27 @@
+using Assets.Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ChangeObjects : MonoBehaviour
 {
     [SerializeField]
-    private List<GameObject> _objects;
+    private List<GameObject> _objectsProxy;
 
-    private List<Renderer> _renderers;
+    private List<ChangableObject> _objects;
+    private IEnumerator<ChangableObject> _currentEnumerator;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _renderers = new();
-        foreach (GameObject item in _objects)
+        _objects = new();
+        foreach (GameObject item in _objectsProxy)
         {
-            _renderers.Add(item.GetComponent<Renderer>());
+            _objects.Add(new ChangableObject(item));
         }
+        _currentEnumerator = _objects.GetEnumerator();
+        MoveNext();
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -26,25 +29,41 @@ public class ChangeObjects : MonoBehaviour
 
     public void PaintToRed()
     {
-        foreach (Renderer item in _renderers)
-        {
-            item.material.color = Color.red;
-        }
+        _currentEnumerator.Current.Renderer.material.color = Color.red;
     }
 
     public void PaintToGreen()
     {
-        foreach (Renderer item in _renderers)
-        {
-            item.material.color = Color.green;
-        }
+        _currentEnumerator.Current.Renderer.material.color = Color.green;
     }
 
     public void PaintToBlue()
     {
-        foreach (Renderer item in _renderers)
+        _currentEnumerator.Current.Renderer.material.color = Color.blue;
+    }
+
+    public void Paint(Color color)
+    {
+        _currentEnumerator.Current.Renderer.material.color = color;
+    }
+
+    public void MoveNext()
+    {
+        Iterate();
+        DisplayCurrentObject();
+    }
+
+    private void Iterate()
+    {
+        if (!_currentEnumerator.MoveNext())
         {
-            item.material.color = Color.blue;
+            _currentEnumerator.Reset();
+            _currentEnumerator.MoveNext();
         }
+    }
+
+    private void DisplayCurrentObject()
+    {
+        _currentEnumerator.Current.Renderer.material.color = Color.lightGray;
     }
 }
