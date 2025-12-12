@@ -1,69 +1,80 @@
-using Assets.Scripts;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChangeObjects : MonoBehaviour
+namespace Assets.Scripts
 {
-    [SerializeField]
-    private List<GameObject> _objectsProxy;
-
-    private List<ChangableObject> _objects;
-    private IEnumerator<ChangableObject> _currentEnumerator;
-
-    void Start()
+    public class ChangeObjects : MonoBehaviour
     {
-        _objects = new();
-        foreach (GameObject item in _objectsProxy)
+        [SerializeField]
+        [InspectorName("PhysicalObjects")]
+        private List<GameObject> _objectsInspector;
+
+        private IList<PhysicalObjectPresentation> _objects;
+        private IEnumerator<PhysicalObjectPresentation> _currentEnumerator;
+
+        void Start()
         {
-            _objects.Add(new ChangableObject(item));
+            _objects = new List<PhysicalObjectPresentation>();
+            foreach (GameObject item in _objectsInspector)
+            {
+                if (item != null)
+                {
+                    _objects.Add(new PhysicalObjectPresentation(item, new PassiveObjectState())); 
+                }
+            }
+            _currentEnumerator = _objects.GetEnumerator();
+            MoveNext();
+            _currentEnumerator.Current.Select();
         }
-        _currentEnumerator = _objects.GetEnumerator();
-        MoveNext();
-    }
 
-    void Update()
-    {
-        
-    }
-
-    public void PaintToRed()
-    {
-        _currentEnumerator.Current.Renderer.material.color = Color.red;
-    }
-
-    public void PaintToGreen()
-    {
-        _currentEnumerator.Current.Renderer.material.color = Color.green;
-    }
-
-    public void PaintToBlue()
-    {
-        _currentEnumerator.Current.Renderer.material.color = Color.blue;
-    }
-
-    public void Paint(Color color)
-    {
-        _currentEnumerator.Current.Renderer.material.color = color;
-    }
-
-    public void MoveNext()
-    {
-        Iterate();
-        DisplayCurrentObject();
-    }
-
-    private void Iterate()
-    {
-        if (!_currentEnumerator.MoveNext())
+        void Update()
         {
-            _currentEnumerator.Reset();
-            _currentEnumerator.MoveNext();
-        }
-    }
 
-    private void DisplayCurrentObject()
-    {
-        _currentEnumerator.Current.Renderer.material.color = Color.lightGray;
+        }
+
+        public void PaintToRed()
+        {
+            _currentEnumerator.Current.PhysicalObject.Paint(Color.red);
+        }
+
+        public void PaintToGreen()
+        {
+            _currentEnumerator.Current.PhysicalObject.Paint(Color.green);
+        }
+
+        public void PaintToBlue()
+        {
+            _currentEnumerator.Current.PhysicalObject.Paint(Color.blue);
+        }
+
+        public void Paint(Color color)
+        {
+            _currentEnumerator.Current.PhysicalObject.Paint(color);
+        }
+
+        public void MoveNext()
+        {
+            if (_objects == null || _objects.Count == 0)
+            {
+                Debug.LogWarning("Список объектов пуст");
+                return;
+            }
+            Iterate();
+            DisplayCurrentObject();
+        }
+
+        private void Iterate()
+        {
+            if (!_currentEnumerator.MoveNext())
+            {
+                _currentEnumerator.Reset();
+                _currentEnumerator.MoveNext();
+            }
+        }
+
+        private void DisplayCurrentObject()
+        {
+            _currentEnumerator.Current.PhysicalObject.Paint(Color.lightGray);
+        }
     }
 }
