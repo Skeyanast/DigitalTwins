@@ -11,7 +11,7 @@ namespace Assets.Scripts
 
         private IList<PhysicalObjectPresentation> _objects;
         private IEnumerator<PhysicalObjectPresentation> _currentEnumerator;
-
+        
         void Start()
         {
             _objects = new List<PhysicalObjectPresentation>();
@@ -60,7 +60,7 @@ namespace Assets.Scripts
                 return;
             }
             Iterate();
-            DisplayCurrentObject();
+            DisplaySelectedObject();
         }
 
         private void Iterate()
@@ -72,9 +72,29 @@ namespace Assets.Scripts
             }
         }
 
-        private void DisplayCurrentObject()
+        private void DisplaySelectedObject()
         {
             _currentEnumerator.Current.PhysicalObject.Paint(Color.lightGray);
+        }
+
+        public void EnterEditMode()
+        {
+
+        }
+
+        public void ExitEditMode()
+        {
+
+        }
+
+        public void RevertEditChanges()
+        {
+
+        }
+
+        public void ApplyEditChanges()
+        {
+
         }
     }
 }
